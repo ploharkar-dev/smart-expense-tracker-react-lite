@@ -188,7 +188,7 @@ const Dashboard = () => {
             </Card>
           </Grid>
           <Grid item xs={12} md={4}>
-            <BudgetAlertWidget userId={user?.userId} monthlyBudget="10000" />
+            <BudgetAlertWidget userId={user?.userId} monthlyBudget={user?.properties?.monthlyBudget} />
           </Grid>
         </Grid>
 

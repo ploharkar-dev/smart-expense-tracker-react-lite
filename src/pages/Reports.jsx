@@ -21,8 +21,9 @@ const Reports = () => {
 
   const fetchSummary = async () => {
     setLoading(true);
+    const budget = Number(user?.properties?.monthlyBudget) || 0;
     try {
-      const response = await reportService.getReportSummary(user.userId, 10000);
+      const response = await reportService.getReportSummary(user.userId, budget);
       setSummary(response.data);
     } catch (err) {
       console.error('Failed to fetch summary');
