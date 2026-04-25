@@ -3,16 +3,19 @@ import {
   Box,
   Button,
   TextField,
-  Paper,
+  Card,
   Typography,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Alert,
+  InputAdornment,
 } from '@mui/material';
 import { useTransactions } from '../context/TransactionContext';
 import { useAuth } from '../context/AuthContext';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const TransactionForm = ({ categories, onTransactionAdded }) => {
   const [categoryId, setCategoryId] = useState('');
@@ -50,11 +53,12 @@ const TransactionForm = ({ categories, onTransactionAdded }) => {
         description,
         txnDate,
       });
-      setSuccessMessage('Transaction added successfully!');
+      setSuccessMessage('✓ Transaction added successfully!');
       setCategoryId('');
       setAmount('');
       setDescription('');
       setTxnDate(new Date().toISOString().split('T')[0]);
+      setTimeout(() => setSuccessMessage(''), 3000);
       if (onTransactionAdded) onTransactionAdded();
     } catch (err) {
       setLocalError('Failed to add transaction');
@@ -62,22 +66,73 @@ const TransactionForm = ({ categories, onTransactionAdded }) => {
   };
 
   return (
-    <Paper elevation={2} sx={{ padding: 3, mb: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Add New Transaction
-      </Typography>
-
-      {localError && <Alert severity="error" sx={{ mb: 2 }}>{localError}</Alert>}
-      {successMessage && <Alert severity="success" sx={{ mb: 2 }}>{successMessage}</Alert>}
+    <Card sx={{
+      padding: 3,
+      background: 'linear-gradient(135deg, rgba(21, 29, 59, 0.8) 0%, rgba(21, 29, 59, 0.6) 100%)',
+      border: '1px solid rgba(0, 212, 255, 0.15)',
+      borderRadius: '16px',
+    }}>
+      {localError && (
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2,
+            backgroundColor: 'rgba(255, 23, 68, 0.1)',
+            borderColor: 'rgba(255, 23, 68, 0.3)',
+            color: '#ff6b9d',
+            border: '1px solid',
+          }}
+        >
+          {localError}
+        </Alert>
+      )}
+      {successMessage && (
+        <Alert
+          severity="success"
+          sx={{
+            mb: 2,
+            backgroundColor: 'rgba(0, 255, 136, 0.1)',
+            borderColor: 'rgba(0, 255, 136, 0.3)',
+            color: '#00ff88',
+            border: '1px solid',
+          }}
+          icon={<CheckCircleIcon />}
+        >
+          {successMessage}
+        </Alert>
+      )}
 
       <Box component="form" onSubmit={handleSubmit}>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel>Category</InputLabel>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            color: '#a0a0c0',
+            mb: 2.5,
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+          }}
+        >
+          Enter transaction details
+        </Typography>
+
+        <FormControl fullWidth sx={{ mb: 2.5 }}>
+          <InputLabel sx={{ color: '#a0a0c0' }}>Category</InputLabel>
           <Select
             value={categoryId}
             label="Category"
             onChange={(e) => setCategoryId(e.target.value)}
             required
+            sx={{
+              color: '#f0f0ff',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(0, 212, 255, 0.2)',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(0, 212, 255, 0.4)',
+              },
+            }}
           >
             {categories.map((cat) => (
               <MenuItem key={cat.categoryId} value={cat.categoryId}>
@@ -96,6 +151,14 @@ const TransactionForm = ({ categories, onTransactionAdded }) => {
           margin="normal"
           inputProps={{ step: '0.01', min: '0' }}
           required
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              color: '#f0f0ff',
+            },
+          }}
         />
 
         <TextField
@@ -107,6 +170,11 @@ const TransactionForm = ({ categories, onTransactionAdded }) => {
           multiline
           rows={2}
           required
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              color: '#f0f0ff',
+            },
+          }}
         />
 
         <TextField
@@ -117,19 +185,37 @@ const TransactionForm = ({ categories, onTransactionAdded }) => {
           onChange={(e) => setTxnDate(e.target.value)}
           margin="normal"
           InputLabelProps={{ shrink: true }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              color: '#f0f0ff',
+            },
+          }}
         />
 
         <Button
           fullWidth
           variant="contained"
-          sx={{ mt: 2 }}
+          sx={{
+            mt: 3,
+            py: 1.5,
+            background: 'linear-gradient(135deg, #00d4ff 0%, #00a8cc 100%)',
+            fontSize: '1rem',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            boxShadow: '0 4px 20px rgba(0, 212, 255, 0.4)',
+            '&:hover': {
+              boxShadow: '0 8px 30px rgba(0, 212, 255, 0.6)',
+              transform: 'translateY(-2px)',
+            },
+          }}
+          startIcon={<AddCircleIcon />}
           type="submit"
           disabled={loading}
         >
-          {loading ? 'Adding...' : 'Add Transaction'}
+          {loading ? 'Processing...' : 'Add Transaction'}
         </Button>
       </Box>
-    </Paper>
+    </Card>
   );
 };
 
